@@ -18,7 +18,7 @@ class PlayListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        changeFieldName()
         setDatabase()
         setTableView()
     }
@@ -44,19 +44,28 @@ class PlayListViewController: UIViewController {
                 let posted = MatchData(snapshot: childSnapshot)
                 self.post.insert(posted, at: 0)
             }
-            self.tableView?.reloadData(with: .simple(duration: 0.45, direction: .left(useCellsFrame: true), constantDelay: 0))
+            self.tableView?.reloadData()
         })
     }
     
-    func getAllKeys() {
-        postsRef.observeSingleEvent(of: .value, with: { (snapshot ) in
-            
-            for child in snapshot.children {
-                guard let childSnapshot = child as? DataSnapshot else {return}
-                let key = childSnapshot.key
-                self.keyArray.append(key)
-            }
-        })
+//    func getAllKeys() {
+//        postsRef.observeSingleEvent(of: .value, with: { (snapshot ) in
+//
+//            for child in snapshot.children {
+//                guard let childSnapshot = child as? DataSnapshot else {return}
+//                let key = childSnapshot.key
+//                self.keyArray.append(key)
+//            }
+//        })
+//    }
+    
+    func changeFieldName() {
+        
+        guard let name = self.navigationController?.topViewController?.title else {return}
+        
+        if navigationController?.topViewController?.title == name {
+            postsRef = Database.database().reference().child("SoccerField").child(name).ref
+        }
     }
         
 }
@@ -96,6 +105,9 @@ extension PlayListViewController: UITableViewDataSource {
         cell.teamAge?.text = item.teamAge
         cell.teamClass?.text = item.teamClass
         cell.teamUniform?.text = item.teamUniform
+        
+        cell.layer.cornerRadius = 15
+        cell.backgroundColor = .brown
         
         return cell
     }
